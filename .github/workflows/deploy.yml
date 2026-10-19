@@ -1,0 +1,80 @@
+# Déploiement du site utilisateur — GHCR → CapRover
+#   push develop → staging ; tag vX.Y.Z → production (approbation requise)
+# Par environnement GitHub : vars CAPROVER_URL, CAPROVER_APP, PUBLIC_URL ; secret CAPROVER_APP_TOKEN.
+# Aucune configuration dans l'image : APP_ENV, API_BASE_URL… sont lues au DÉMARRAGE (src/core/config/env.ts).
+name: deploy
+
+on:
+  push:
+    branches: [develop]
+    tags: ['v*.*.*']
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  build:
+    needs: ci
+    runs-on: ubuntu-24.04
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
+      environment: ${{ steps.meta.outputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: meta
+        run: |
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}:${GITHUB_SHA::8}"
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then ENVIRONMENT=production; else ENVIRONMENT=staging; fi
+          echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
+          echo "environment=$ENVIRONMENT" >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.image }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    environment:
+      name: ${{ needs.build.outputs.environment }}
+      url: ${{ vars.PUBLIC_URL }}
+    concurrency:
+      group: deploy-${{ needs.build.outputs.environment }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --global --no-fund --no-audit caprover@2.4.4
+      - name: Déployer
+        run: |
+          caprover deploy --caproverUrl "${{ vars.CAPROVER_URL }}" \
+            --appToken "${{ secrets.CAPROVER_APP_TOKEN }}" \
+            --caproverApp "${{ vars.CAPROVER_APP }}" \
+            --imageName "${{ needs.build.outputs.image }}" 2>&1 | tee caprover.log
+          if grep -qiE "build has failed|deploy failed|pull access denied|unauthorized" caprover.log; then
+            echo "::error::CapRover n'a pas pu déployer l'image (registre ghcr.io configuré ?)"; exit 1
+          fi
+      - name: Contrôle de fumée
+        run: |
+          for i in $(seq 1 20); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "${{ vars.PUBLIC_URL }}/healthz" || true)
+            echo "tentative $i : /healthz=$code"
+            if [ "$code" = 200 ]; then exit 0; fi
+            sleep 10
+          done
+          exit 1

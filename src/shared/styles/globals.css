@@ -1,0 +1,97 @@
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------ */
+/* Polices auto-hébergées (04-UI-UX-Design §2.2) — fichiers variables  */
+/* Fontsource, sous-ensemble latin (français, anglais), licence OFL    */
+/* (public/fonts/LICENSE-*.txt). Aucune requête vers un tiers.         */
+/* ------------------------------------------------------------------ */
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url('/fonts/bricolage-grotesque-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Figtree';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 900;
+  src: url('/fonts/figtree-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ------------------------------------------------------------------ */
+/* Jetons « Nuit de Dakar » — 04-UI-UX-Design §2.1                     */
+/* Une marque ne peut redéfinir QUE --accent, --accent-contrast,       */
+/* --coin (et la police d'affichage) : la structure ne change jamais.  */
+/* ------------------------------------------------------------------ */
+:root {
+  --bg: #0f0b14;
+  --surface-1: #18131f;
+  --surface-2: #231c2c;
+  --border: #2f2639;
+  --text: #f4eff8;
+  --text-muted: #a99db6;
+  --accent: #e0325e;
+  --accent-contrast: #ffffff;
+  --coin: #f5b33b;
+  --success: #3ccb7f;
+  --warning: #f2c14e;
+  --danger: #ff6b5e;
+  --focus: #8ab4ff;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-contrast: var(--accent-contrast);
+  --color-coin: var(--coin);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-sans: 'Figtree', system-ui, sans-serif;
+  --radius-card: 12px;
+  --radius-sheet: 20px;
+}
+
+html {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  line-height: 1.5;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

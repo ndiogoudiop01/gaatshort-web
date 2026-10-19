@@ -1,0 +1,6 @@
+.next/
+out/
+coverage/
+reports/
+public/
+pnpm-lock.yaml

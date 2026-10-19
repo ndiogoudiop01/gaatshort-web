@@ -1,0 +1,32 @@
+node_modules/
+.next/
+out/
+build/
+coverage/
+reports/
+.pnpm-store/
+*.tsbuildinfo
+next-env.d.ts
+
+# Variables locales : `.env.example` est la référence versionnée.
+.env
+.env.*
+!.env.example
+
+*.log
+*.pem
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.vercel
+.claude/*
+.agent/*
+
+# Fichiers générés par `next dev` pour les assistants de code.
+AGENTS.md
+CLAUDE.md
+
+# Base GeoIP téléchargée (scripts/fetch-geoip.sh)
+/geoip/
+*.mmdb
