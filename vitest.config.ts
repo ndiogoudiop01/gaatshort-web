@@ -26,7 +26,7 @@ export default defineConfig({
       reportsDirectory: './coverage',
       // Le socle et les règles métier pures : ce qui casse en silence quand ça casse.
       // Les composants se vérifient à l'œil et en recette, pas au pourcentage.
-      include: ['src/core/**/*.ts', 'src/shared/utils/**/*.ts', 'src/modules/**/*-rules.ts'],
+      include: ['src/core/**/*.ts', 'src/shared/utils/**/*.ts', 'src/modules/**/*-rules.ts', 'src/modules/**/format.ts', 'src/modules/**/messages.ts'],
       exclude: ['src/**/types.ts', 'src/**/index.ts', 'src/core/i18n/locales/**'],
       thresholds: { statements: 80, branches: 75, functions: 80, lines: 80 },
     },
