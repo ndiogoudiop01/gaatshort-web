@@ -26,6 +26,21 @@ seed backend) est utilisée. En production `DEV_TENANT` est interdit et un hôte
 | `pnpm lint:ci` · `pnpm format:check` · `pnpm typecheck` | qualité (bloquant en CI) |
 | `pnpm test:ci` | tests unitaires + seuils de couverture (80 %) |
 
+## Pages (v0)
+
+| Route | Contenu |
+|---|---|
+| `/` | À la une, Reprendre, rangées, genres |
+| `/decouvrir` | Recherche, filtre par genre, pagination |
+| `/serie/[slug]` | Fiche (SEO + Open Graph), épisodes gratuits / verrouillés, Ma liste |
+| `/regarder/[episodeId]` | Lecteur vertical HLS (hls.js, natif sur Safari), reprise, épisode suivant ; verrou → connexion, déblocage ou boutique |
+| `/connexion` | Code SMS (+221 / +220) |
+| `/boutique`, `/boutique/retour` | Packs de crédits ; retour de paiement qui attend la confirmation **vérifiée** de l'opérateur |
+| `/ma-liste`, `/profil` | Favoris ; solde, déconnexion |
+| `/manifest.webmanifest`, `/sitemap.xml`, `/robots.txt` | Installable sur l'écran d'accueil ; plan du site par marque |
+
+Session : jetons dans des cookies `httpOnly` posés par le serveur Next (`src/core/session`). Les pages lisent, les Server Actions (`src/modules/viewer/actions.ts`) écrivent et rafraîchissent ; une page dont le jeton expire passe par `/session/refresh`.
+
 ## Principes
 
 - **La marque vient de l'hôte**, résolu côté serveur (`src/core/tenancy/tenant-key.ts`) et transmis
